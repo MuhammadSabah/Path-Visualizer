@@ -17,8 +17,8 @@ clock = pygame.time.Clock()
 black = (0, 0, 0)
 gray = (33, 37, 41)
 white = (255, 255, 255)
-green = (56, 176, 0)
-red = (164, 22, 26)
+green = (0, 255, 0)
+red = (255, 0, 0)
 blue = (0, 0, 255)
 yellow = (252, 163, 17)
 cyan = (0, 204, 204)
@@ -29,7 +29,6 @@ box_size = 18
 cols = math.ceil(window_width / box_size)
 rows = math.ceil(window_height / box_size)
 
-print(cols, rows)
 grid = []
 neighbors = []
 path = []
@@ -65,7 +64,6 @@ def start():
                 y = pygame.mouse.get_pos()[1]
 
                 if event.buttons[0]:
-                    print(x, y)
                     a = x // box_size
                     b = y // box_size
                     box = grid[a][b]
@@ -76,7 +74,6 @@ def start():
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 box_x = mouse_x // box_size
                 box_y = mouse_y // box_size
-                print(box_x, box_y)
                 selected_box = grid[box_x][box_y]
                 if len(start_and_destination) < 2:
                     if not selected_box.is_start and len(start_and_destination) == 0 and not selected_box.wall:
