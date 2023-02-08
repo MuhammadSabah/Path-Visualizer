@@ -12,11 +12,11 @@ class Box:
         self.parent = None
         self.visited = False
         self.wall = False
-        self.queued =False
+        self.queued = False
 
     def draw(self, screen, box_size, color):
         rect = pygame.Rect(self.x * box_size, self.y * box_size, box_size - 1, box_size - 1)
-        pygame.draw.rect(screen, color, rect)
+        pygame.draw.rect(screen, color, rect, border_radius=2)
 
     def set_neighbor(self, cols, rows):
         # Check the cell above the current cell

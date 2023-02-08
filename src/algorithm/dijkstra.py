@@ -1,6 +1,7 @@
 from heapq import heappop, heappush
 
 
+# dijkstra algorithm, this is not used for the visualization. It's just an example to better understand
 def dijkstra(graph, start):
     distances = {vertex: float('inf') for vertex in graph}
     distances[start] = 0

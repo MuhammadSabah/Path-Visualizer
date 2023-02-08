@@ -1,34 +1,40 @@
 import tkinter as tk
+from tkinter import messagebox
 import pygame
 import box
 import math
 from heapq import heappop, heappush
 
 pygame.init()
-window_height = 600
-window_width = 1100
+window_height = 630
+window_width = 1080
 
 screen = pygame.display.set_mode((window_width, window_height))
 pygame.display.set_caption("Dijkstra's Algorithm")
-
 clock = pygame.time.Clock()
 
 # colors
 black = (0, 0, 0)
-gray = (30, 30, 30)
+gray = (33, 37, 41)
 white = (255, 255, 255)
-green = (0, 255, 0)
-red = (255, 0, 0)
+green = (56, 176, 0)
+red = (164, 22, 26)
 blue = (0, 0, 255)
+yellow = (252, 163, 17)
+cyan = (0, 204, 204)
+light_cyan = (0, 100, 100)
+dark_blue = (36, 73, 89)
 
-box_size = 20
-cols = window_width // box_size
-rows = window_height // box_size
+box_size = 18
+cols = math.ceil(window_width / box_size)
+rows = math.ceil(window_height / box_size)
 
+print(cols, rows)
 grid = []
 neighbors = []
 path = []
 start_and_destination = []
+heap_queue = []
 
 # create a multidimensional grid and fill it with the values of each cell
 for i in range(cols):
@@ -59,6 +65,7 @@ def start():
                 y = pygame.mouse.get_pos()[1]
 
                 if event.buttons[0]:
+                    print(x, y)
                     a = x // box_size
                     b = y // box_size
                     box = grid[a][b]
@@ -82,33 +89,41 @@ def start():
                         start_and_destination.append(selected_box)
 
             if event.type == pygame.KEYDOWN and len(start_and_destination) == 2:
+                start_box = start_and_destination[0]
+                destination_box = start_and_destination[1]
+                start_box.distance = 0
+                heap_queue = [(start_box.distance, start_box)]
                 start_search = True
 
         if start_search:
-            start_box = start_and_destination[0]
-            destination_box = start_and_destination[1]
-            start_box.distance = 0
-            heap = [(start_box.distance, start_box)]
-            while heap and continue_search:
-                current_box = heappop(heap)[1]
+            if heap_queue and continue_search:
+                current_box = heappop(heap_queue)[1]
+                current_box.visited = True
                 if current_box == destination_box and not current_box.wall:
+                    continue_search = False
                     while current_box.parent:
                         path.append(current_box)
                         current_box = current_box.parent
 
-                current_box.visited = True
-
                 for neighbor in current_box.neighbors:
+
                     x, y = neighbor
                     box = grid[x][y]
                     if box.visited or box.wall:
                         continue
                     new_distance = current_box.distance + 1
-                    if new_distance < box.distance and not box.is_destination:
+
+                    if new_distance < box.distance:
                         box.queued = True
                         box.distance = new_distance
                         box.parent = current_box
-                        heappush(heap, (box.distance, box))
+                        heappush(heap_queue, (box.distance, box))
+
+            else:
+                if continue_search:
+                    tk.Tk().wm_withdraw()
+                    messagebox.showinfo("No path", "No path found!")
+                    break
 
         screen.fill(black)
         for x in range(cols):
@@ -116,26 +131,25 @@ def start():
                 box = grid[x][y]
                 box.draw(screen, box_size, gray)
 
+                if box.queued:
+                    box.draw(screen, box_size, light_cyan)
+
+                if box.visited:
+                    box.draw(screen, box_size, cyan)
+
+                if box in path:
+                    box.draw(screen, box_size, blue)
+
                 if box.is_start:
                     box.draw(screen, box_size, green)
 
                 if box.is_destination:
                     box.draw(screen, box_size, red)
 
-                if box in path[1:]:
-                    box.draw(screen, box_size, blue)
-
                 if box.wall:
-                    box.draw(screen, box_size, (255, 255, 0))
-
-                # if box.queued:
-                #     box.draw(screen, box_size, (0, 255, 255))
-                #
-                # if box.parent:
-                #     box.draw(screen, box_size, (255, 0, 255))
+                    box.draw(screen, box_size, yellow)
 
         pygame.display.flip()
-        clock.tick(60)
 
 
 if __name__ == "__main__":
